@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleExecutable</key>
+	<string>applet</string> <!-- Standard for AppleScript apps -->
+	<key>CFBundleIconFile</key>
+	<string>applet</string> <!-- Standard icon -->
+	<key>CFBundleIdentifier</key>
+	<!-- CHANGE THIS to a unique identifier (e.g., com.yourname.urlhandler) -->
+	<string>com.example.myurlhandler</string>
+	<key>CFBundleName</key>
+	<!-- CHANGE THIS to your desired application name -->
+	<string>MyURLHandler</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.9</string> <!-- Set minimum macOS version if needed -->
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © Your Name Here</string> <!-- Optional -->
+
+	<!-- This section registers the custom URL scheme -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<!-- Descriptive name for the URL type -->
+			<string>My Custom URL Handler</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- CHANGE THIS to your desired scheme (e.g., myapp, git-repo) -->
+				<string>myprotocol</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
