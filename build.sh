@@ -38,7 +38,24 @@ echo "1. Move '$APP_NAME' to your /Applications or ~/Applications folder."
 echo "   (Moving it forces LaunchServices to notice it)."
 echo "2. OR, for immediate registration without moving, run:"
 echo "   /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f \"$(pwd)/$APP_NAME\""
+
+echo "WE ARE PROCEEDING WITH OPTION 2..."
+
+# --- Auto-register ---
+echo "Registering the application with LaunchServices..."
+# Construct the absolute path to the app bundle
+APP_PATH="$(pwd)/$APP_NAME"
+# Run lsregister
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$APP_PATH"
+if [ $? -ne 0 ]; then
+    echo "Warning: lsregister command failed. You may need to register manually by moving the app."
+    # Optionally exit here if registration is critical: exit 1
+else
+    echo "Registration successful (or app already registered)."
+fi
+
 echo ""
+echo "Build and registration complete for '$APP_NAME'."
 echo "You can now test by opening a URL like 'myprotocol://some/data' in your browser or using 'open myprotocol://some/data' in Terminal."
 
 exit 0
