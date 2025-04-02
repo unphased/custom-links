@@ -29,11 +29,11 @@
 		<dict>
 			<key>CFBundleURLName</key>
 			<!-- Descriptive name for the URL type -->
-			<string>My Custom URL Handler</string>
+			<string>Open or focus a suitable Neovide or nvim, or if holding shift, vscode, to a code location.</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<!-- CHANGE THIS to your desired scheme (e.g., myapp, git-repo) -->
-				<string>myprotocol</string>
+				<string>code</string>
 			</array>
 		</dict>
 	</array>
