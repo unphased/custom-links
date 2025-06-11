@@ -4,12 +4,12 @@ This document outlines the current state of the "Custom Link URL Handler" projec
 
 ## Current Project State
 
-As of commit `e743782` ("docs: Add README explaining custom link handler"):
+As of commit `b24426a` ("feat: Add explicit bash path, error title, and run handler"):
 
 1.  **Core Infrastructure**:
     *   A `build.sh` script is in place to compile an AppleScript application (`MyURLHandler.app`).
     *   The build script handles:
-        *   Compiling a placeholder `HandleURL.applescript` (not yet created, but referenced).
+        *   Compiling `HandleURL.applescript`.
         *   Copying a custom `Info.plist` into the application bundle.
         *   Bundling a shell script (`your_actual_script.sh`) into the app's Resources.
         *   Registering the application with LaunchServices to handle a custom URL scheme.
@@ -20,9 +20,9 @@ As of commit `e743782` ("docs: Add README explaining custom link handler"):
         *   Includes a descriptive name for the URL type related to opening code locations.
     *   `your_actual_script.sh` is a basic script that currently logs the received URL to `$HOME/custom_url_handler.log`.
     *   `README.md` provides a high-level overview of the project, its concept, the "Reveal" skill use case, and setup instructions.
+    *   `HandleURL.applescript` is implemented to receive the URL and pass it to `your_actual_script.sh`. It includes basic error handling and an `on run` handler for direct app launch.
 
 2.  **Missing Components**:
-    *   The actual `HandleURL.applescript` file needs to be created. Its role is to receive the URL from macOS and pass it to `your_actual_script.sh`.
     *   The logic within `your_actual_script.sh` for the "Reveal" skill is not yet implemented.
 
 3.  **Functionality**:
@@ -42,20 +42,12 @@ As of commit `e743782` ("docs: Add README explaining custom link handler"):
 
 ## Next Steps to Implement the "Reveal" Skill
 
-1.  **Create `HandleURL.applescript`**:
-    *   **Objective**: This script is the entry point when a `reveal://` URL is opened. It needs to capture the full URL and execute `your_actual_script.sh`, passing the URL as an argument.
-    *   **Action**: Write the AppleScript. It should look something like:
-        ```applescript
-        on open location this_URL
-            -- Get path to the bundled shell script
-            set scriptPath to (path to me as text) & "Contents/Resources/your_actual_script.sh"
-            -- Execute the shell script with the URL as an argument
-            do shell script "bash " & quoted form of POSIX path of scriptPath & " " & quoted form of this_URL
-        end open location
-        ```
-    *   Ensure `build.sh` correctly references this new file if the name differs from `HandleURL.applescript`.
+1.  **`HandleURL.applescript` Implementation**: **(DONE)**
+    *   **Status**: The `HandleURL.applescript` file has been created and refined (as of commit `b24426a`).
+    *   **Functionality**: It correctly captures the incoming URL, constructs the path to `your_actual_script.sh` within the app bundle, and executes the shell script, passing the URL as an argument. It uses `/bin/bash` explicitly, includes error dialogs with a title, and has an `on run` handler for direct launches.
+    *   `build.sh` correctly references this file.
 
-2.  **Enhance `your_actual_script.sh` for "Reveal" Logic**:
+2.  **Enhance `your_actual_script.sh` for "Reveal" Logic**: **(PENDING)**
     *   **URL Parsing**:
         *   Extract the path/data from the received URL (e.g., `reveal://path/to/file` -> `/path/to/file`). Consider how to handle URL encoding.
     *   **Path Validation**:
