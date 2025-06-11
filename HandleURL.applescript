@@ -10,9 +10,14 @@ on open location theURL
 	# Execute the shell script, passing the received URL as the first argument.
 	# 'quoted form of' ensures arguments with spaces or special characters are handled correctly.
 	try
-		do shell script quoted form of scriptPath & " " & quoted form of theURL
+		do shell script "/bin/bash " & quoted form of scriptPath & " " & quoted form of theURL
 	on error errMsg number errNum
 		# Basic error handling: display a dialog if the script fails
-		display dialog "Error executing script: " & errMsg & " (Error " & errNum & ")" buttons {"OK"} default button "OK"
+		display dialog "Error executing script: " & errMsg & " (Error " & errNum & ")" with title "MyURLHandler Error" buttons {"OK"} default button "OK"
 	end try
 end open location
+
+on run
+	# This handler is called if the Application is launched directly, not via URL
+	display dialog "This application is intended to be launched via its custom URL scheme (reveal://)." with title "MyURLHandler" buttons {"OK"} default button "OK"
+end run
