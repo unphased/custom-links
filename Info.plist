@@ -29,11 +29,11 @@
 		<dict>
 			<key>CFBundleURLName</key>
 			<!-- Descriptive name for the URL type -->
-			<string>Open or focus a suitable Neovide or nvim, or if holding shift, vscode, to a code location.</string>
+			<string>Reveal a file or directory in the appropriate application (Finder, code editor).</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<!-- CHANGE THIS to your desired scheme (e.g., myapp, git-repo) -->
-				<string>code</string>
+				<string>reveal</string>
 			</array>
 		</dict>
 	</array>

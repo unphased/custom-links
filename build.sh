@@ -56,6 +56,6 @@ fi
 
 echo ""
 echo "Build and registration complete for '$APP_NAME'."
-echo "You can now test by opening a URL like 'myprotocol://some/data' in your browser or using 'open myprotocol://some/data' in Terminal."
+echo "You can now test by opening a URL like 'reveal://some/data' in your browser or using 'open reveal://some/data' in Terminal."
 
 exit 0

@@ -26,7 +26,7 @@ This approach aims to streamline workflows by providing a seamless way to naviga
 
 The custom URL handler is built as a macOS Application Bundle.
 
-*   `Info.plist`: Defines the custom URL scheme (e.g., `code://`) and other application metadata.
+*   `Info.plist`: Defines the custom URL scheme (e.g., `reveal://`) and other application metadata.
 *   `HandleURL.applescript` (not provided in chat, but implied by `build.sh`): The AppleScript that receives the URL and triggers the actual logic. This script is responsible for parsing the URL and passing it to a shell script.
 *   `your_actual_script.sh`: A shell script that is bundled with the application. This script contains the custom logic to be executed when the URL is invoked. It receives the full URL as an argument.
 *   `build.sh`: A shell script to compile the AppleScript into an application bundle, copy the `Info.plist` and `your_actual_script.sh` into the bundle, and register the application with LaunchServices.
@@ -39,8 +39,8 @@ The custom URL handler is built as a macOS Application Bundle.
     ```
 2.  Once registered, you can invoke the handler by opening a URL with the custom scheme, for example, from a terminal:
     ```bash
-    open code://some/data/or/path
+    open reveal://some/data/or/path
     ```
-    Or by clicking a link `code://some/data/or/path` in an application that supports custom URL schemes.
+    Or by clicking a link `reveal://some/data/or/path` in an application that supports custom URL schemes.
 
-The `your_actual_script.sh` will then receive `code://some/data/or/path` as its first argument and can act upon it.
+The `your_actual_script.sh` will then receive `reveal://some/data/or/path` as its first argument and can act upon it.

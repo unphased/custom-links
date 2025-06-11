@@ -16,7 +16,7 @@ As of commit `e743782` ("docs: Add README explaining custom link handler"):
     *   `Info.plist` is configured:
         *   Defines `CFBundleIdentifier` (currently `com.example.myurlhandler`).
         *   Defines `CFBundleName` (currently `MyURLHandler`).
-        *   Registers the `code://` URL scheme.
+        *   Registers the `reveal://` URL scheme.
         *   Includes a descriptive name for the URL type related to opening code locations.
     *   `your_actual_script.sh` is a basic script that currently logs the received URL to `$HOME/custom_url_handler.log`.
     *   `README.md` provides a high-level overview of the project, its concept, the "Reveal" skill use case, and setup instructions.
@@ -27,7 +27,7 @@ As of commit `e743782` ("docs: Add README explaining custom link handler"):
 
 3.  **Functionality**:
     *   The system can be built and registered.
-    *   Invoking a `code://` URL will trigger `your_actual_script.sh`, and the URL will be logged.
+    *   Invoking a `reveal://` URL will trigger `your_actual_script.sh`, and the URL will be logged.
     *   No actual file/code revealing functionality exists yet.
 
 ## Stated Goals (Recap from README.md)
@@ -43,7 +43,7 @@ As of commit `e743782` ("docs: Add README explaining custom link handler"):
 ## Next Steps to Implement the "Reveal" Skill
 
 1.  **Create `HandleURL.applescript`**:
-    *   **Objective**: This script is the entry point when a `code://` URL is opened. It needs to capture the full URL and execute `your_actual_script.sh`, passing the URL as an argument.
+    *   **Objective**: This script is the entry point when a `reveal://` URL is opened. It needs to capture the full URL and execute `your_actual_script.sh`, passing the URL as an argument.
     *   **Action**: Write the AppleScript. It should look something like:
         ```applescript
         on open location this_URL
@@ -57,7 +57,7 @@ As of commit `e743782` ("docs: Add README explaining custom link handler"):
 
 2.  **Enhance `your_actual_script.sh` for "Reveal" Logic**:
     *   **URL Parsing**:
-        *   Extract the path/data from the received URL (e.g., `code://path/to/file` -> `/path/to/file`). Consider how to handle URL encoding.
+        *   Extract the path/data from the received URL (e.g., `reveal://path/to/file` -> `/path/to/file`). Consider how to handle URL encoding.
     *   **Path Validation**:
         *   Check if the extracted path exists.
     *   **Source Code File Detection**:
