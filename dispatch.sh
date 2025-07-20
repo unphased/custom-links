@@ -63,32 +63,23 @@ execute_handler() {
     fi
 }
 
-# --- File Type Detection ---
-# Define a list of extensions to be considered "source code".
-# This could also be moved to the user config file.
-# Note: This is a simple example. A more robust solution might use `file` command.
-is_source_code() {
-    local filename="$1"
-    case "$filename" in
-        *.py|*.js|*.ts|*.jsx|*.tsx|*.rb|*.go|*.rs|*.c|*.cpp|*.h|*.hpp|*.java|*.kt|*.swift|*.sh|*.zsh|*.bash|*.md|*.json|*.yml|*.yaml|*.toml|*.lua)
-            return 0 # Is source code
-            ;;
-        *)
-            return 1 # Is not source code
-            ;;
-    esac
-}
-
 # --- Main Logic ---
-if [ -d "$expanded_path" ]; then
-    log "Path is a directory. Using finder handler."
-    execute_handler "open_in_finder.sh" "$expanded_path"
-elif is_source_code "$expanded_path"; then
-    log "Path is a source code file. Using editor handler."
-    execute_handler "open_in_editor.sh" "$expanded_path"
+# The dispatcher attempts to run handlers in a sequence. A handler can "decline"
+# to handle an input by exiting with a non-zero status code, at which point
+# the dispatcher will try the next handler in the chain.
+
+log "Attempting to open with editor handler..."
+if execute_handler "open_in_editor.sh" "$expanded_path"; then
+    log "Editor handler succeeded."
 else
-    log "Path is a non-code file. Using finder handler."
-    execute_handler "open_in_finder.sh" "$expanded_path"
+    log "Editor handler declined or failed. Falling back to finder handler..."
+    if execute_handler "open_in_finder.sh" "$expanded_path"; then
+        log "Finder handler succeeded."
+    else
+        log "All handlers failed for path: $expanded_path"
+        osascript -e "display notification \"Could not handle the input: ${expanded_path}\" with title \"Reveal Handler Error\""
+        exit 1
+    fi
 fi
 
 log "--- Dispatcher Finished ---"

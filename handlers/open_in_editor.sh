@@ -4,15 +4,43 @@
 # INPUT:
 #   - $1: The full path to the file to open.
 #
-# This is where you can place your custom logic for opening files in your
-# preferred editor, like Neovim, VSCode, etc.
-#
-# You can copy this file to your user configuration directory and modify it
-# to override the default behavior without changing the core application.
+# This script should inspect the input path and decide if it's a "code file"
+# it can handle. If so, it should open it and exit with 0.
+# If not, it should exit with a non-zero status (e.g., 1) to allow the
+# dispatcher to fall back to the next handler.
 
 set -e
 
 FILE_PATH="$1"
+
+# --- File Type Check ---
+# This handler only acts on files it considers "source code".
+# We exit with 1 if the file is not a code file, or if it's a directory.
+if [ -d "$FILE_PATH" ]; then
+    # This is not an error, just this handler declining to act.
+    # Output to stderr for logging by the dispatcher.
+    echo "Editor handler: Input is a directory, declining." >&2
+    exit 1
+fi
+
+is_source_code() {
+    local filename="$1"
+    # A list of extensions to be considered "source code".
+    # Users can override this logic in their custom handler.
+    case "$filename" in
+        *.py|*.js|*.ts|*.jsx|*.tsx|*.rb|*.go|*.rs|*.c|*.cpp|*.h|*.hpp|*.java|*.kt|*.swift|*.sh|*.zsh|*.bash|*.md|*.json|*.yml|*.yaml|*.toml|*.lua)
+            return 0 # Is source code
+            ;;
+        *)
+            return 1 # Is not source code
+            ;;
+    esac
+}
+
+if ! is_source_code "$FILE_PATH"; then
+    echo "Editor handler: '${FILE_PATH##*/}' is not a code file, declining." >&2
+    exit 1
+fi
 
 # --- USER-SPECIFIC LOGIC ---
 # This is an example of advanced Neovim/Neovide/Tmux integration.

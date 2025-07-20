@@ -27,7 +27,7 @@ This approach aims to streamline workflows by providing a seamless way to naviga
 The system uses a flexible, handler-based architecture.
 
 *   **URL Handler App**: A minimal macOS Application Bundle (`.app`) whose only job is to register the `reveal://` URL scheme.
-*   `dispatch.sh`: The core script inside the app bundle. It acts as a **dispatcher**. When a `reveal://` URL is triggered, this script parses the path, determines what kind of file or directory it is, and delegates the action to a specialized handler script.
+*   `dispatch.sh`: The core script inside the app bundle. It acts as a **dispatcher**. When a `reveal://` URL is triggered, this script parses the path and then attempts to execute handlers in a sequence. It first tries to open the path in an editor; if that handler declines (by exiting with a non-zero status code), it falls back to revealing it in the Finder. This allows handlers themselves to contain the logic for what they can open.
 *   `handlers/`: A directory of **handler scripts** that perform the actual work. The project includes default handlers for common actions:
     *   `open_in_editor.sh`: Opens source code files. The default version provides a sensible starting point that can be customized.
     *   `open_in_finder.sh`: Reveals files or opens directories in Finder.

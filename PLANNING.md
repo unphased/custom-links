@@ -18,7 +18,7 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
 2.  **Functionality**:
     *   The system can be built and registered.
     *   Invoking a `reveal://` URL triggers `dispatch.sh`.
-    *   The dispatcher decodes the path, performs tilde expansion, and determines whether it's a directory, source code file, or other file. Path validation is not performed; this is left to the handlers.
+    *   The dispatcher decodes the path and performs tilde expansion. It then attempts to run handlers in a predefined sequence (e.g., editor, then finder). Each handler is responsible for deciding whether it can process the input, exiting with a non-zero status code to "decline". If one handler declines, the dispatcher falls back to the next in the sequence.
     *   It executes the appropriate handler (`open_in_finder.sh` or `open_in_editor.sh`).
     *   The default `open_in_editor.sh` provides a basic fallback, ready for user-specific logic (e.g., Neovim/VSCode integration).
     *   The system is now flexible and configurable.
