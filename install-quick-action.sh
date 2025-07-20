@@ -44,44 +44,18 @@ EOF
 
 # --- Create document.wflow, the core Automator workflow file ---
 # This defines the actions to take. Here, it's a single "Run Shell Script" action.
+# This structure is based on a working Quick Action created manually with Automator.
 cat <<EOF > "$WORKFLOW_PATH/Contents/document.wflow"
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>509</string>
-	<key>AMApplicationName</key>
-	<string>Automator</string>
+	<string>527</string>
 	<key>AMApplicationVersion</key>
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
 	<string>2</string>
-	<key>AMWorkflowType</key>
-	<string>com.apple.Automator.servicesMenu</string>
-	<key>workflowMetaData</key>
-	<dict>
-		<key>workflowType</key>
-		<string>com.apple.Automator.servicesMenu</string>
-		<key>input</key>
-		<dict>
-			<key>required</key>
-			<string>0</string>
-			<key>types</key>
-			<array>
-				<string>public.utf8-plain-text</string>
-			</array>
-		</dict>
-		<key>output</key>
-		<dict>
-			<key>required</key>
-			<string>0</string>
-			<key>types</key>
-			<array>
-				<string>com.apple.Automator.nothing</string>
-			</array>
-		</dict>
-	</dict>
 	<key>actions</key>
 	<array>
 		<dict>
@@ -105,7 +79,18 @@ cat <<EOF > "$WORKFLOW_PATH/Contents/document.wflow"
 					<string>Automator</string>
 				</array>
 				<key>AMParameterProperties</key>
-				<dict/>
+				<dict>
+					<key>COMMAND_STRING</key>
+					<dict/>
+					<key>CheckedForUserDefaultShell</key>
+					<dict/>
+					<key>inputMethod</key>
+					<dict/>
+					<key>shell</key>
+					<dict/>
+					<key>source</key>
+					<dict/>
+				</dict>
 				<key>AMProvides</key>
 				<dict>
 					<key>Container</key>
@@ -121,7 +106,7 @@ cat <<EOF > "$WORKFLOW_PATH/Contents/document.wflow"
 				<string>Run Shell Script</string>
 				<key>ActionParameters</key>
 				<dict>
-					<key>command</key>
+					<key>COMMAND_STRING</key>
 					<string># For debugging, log to a file to see if the action is triggered and what it receives.
 # We use /tmp because it is a world-writable directory, avoiding permissions issues.
 QUICK_ACTION_LOG="/tmp/quick_action_debug.log"
@@ -139,17 +124,23 @@ open "reveal://\$input"
 
 echo "Executed: open \"reveal://\$input\"" &gt;&gt; "\$QUICK_ACTION_LOG"
 </string>
+					<key>CheckedForUserDefaultShell</key>
+					<true/>
 					<key>inputMethod</key>
 					<integer>0</integer>
 					<key>shell</key>
-					<string>/bin/bash</string>
+					<string>/bin/zsh</string>
+					<key>source</key>
+					<string></string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.RunShellScript</string>
 				<key>CFBundleVersion</key>
 				<string>2.0.3</string>
-				<key>CanShowWhenRun</key>
+				<key>CanShowSelectedItemsWhenRun</key>
 				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
 				<key>Category</key>
 				<array>
 					<string>AMCategoryUtilities</string>
@@ -174,11 +165,116 @@ echo "Executed: open \"reveal://\$input\"" &gt;&gt; "\$QUICK_ACTION_LOG"
 				<array>
 					<string>Automator</string>
 				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<integer>0</integer>
+						<key>name</key>
+						<string>inputMethod</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+					<key>1</key>
+					<dict>
+						<key>default value</key>
+						<false/>
+						<key>name</key>
+						<string>CheckedForUserDefaultShell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>1</string>
+					</dict>
+					<key>2</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>2</string>
+					</dict>
+					<key>3</key>
+					<dict>
+						<key>default value</key>
+						<string></string>
+						<key>name</key>
+						<string>COMMAND_STRING</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>3</string>
+					</dict>
+					<key>4</key>
+					<dict>
+						<key>default value</key>
+						<string>/bin/sh</string>
+						<key>name</key>
+						<string>shell</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>4</string>
+					</dict>
+				</dict>
+				<key>conversionLabel</key>
+				<integer>0</integer>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>439.500000:546.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
 		</dict>
 	</array>
 	<key>connectors</key>
-	<array/>
+	<dict/>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>applicationBundleIDsByPath</key>
+		<dict/>
+		<key>applicationPaths</key>
+		<array/>
+		<key>inputTypeIdentifier</key>
+		<string>com.apple.Automator.text</string>
+		<key>outputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>presentationMode</key>
+		<integer>11</integer>
+		<key>processesInput</key>
+		<false/>
+		<key>serviceInputTypeIdentifier</key>
+		<string>com.apple.Automator.text</string>
+		<key>serviceOutputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>serviceProcessesInput</key>
+		<false/>
+		<key>systemImageName</key>
+		<string>NSActionTemplate</string>
+		<key>useAutomaticInputType</key>
+		<true/>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.servicesMenu</string>
+	</dict>
 </dict>
 </plist>
 EOF
