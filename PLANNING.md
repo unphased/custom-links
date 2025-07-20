@@ -11,16 +11,16 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
     *   The build script handles:
         *   Compiling `HandleURL.applescript`.
         *   Copying a custom `Info.plist` into the application bundle.
-        *   Bundling a shell script (`your_actual_script.sh`) into the app's Resources.
+        *   Bundling a shell script (`reveal.sh`) into the app's Resources.
         *   Registering the application with LaunchServices to handle a custom URL scheme.
     *   `Info.plist` is configured:
         *   Defines `CFBundleIdentifier` (currently `com.example.myurlhandler`).
         *   Defines `CFBundleName` (currently `MyURLHandler`).
         *   Registers the `reveal://` URL scheme.
         *   Includes a descriptive name for the URL type related to opening code locations.
-    *   `your_actual_script.sh` is a basic script that currently logs the received URL to `$HOME/custom_url_handler.log`.
+    *   `reveal.sh` is a basic script that currently logs the received URL to `$HOME/custom_url_handler.log`.
     *   `README.md` provides a high-level overview of the project, its concept, the "Reveal" skill use case, and setup instructions.
-    *   The `build.sh` script embeds the necessary AppleScript to receive the URL and pass it to `your_actual_script.sh`. This wrapper includes basic error handling and an `on run` handler for direct app launch.
+    *   The `build.sh` script embeds the necessary AppleScript to receive the URL and pass it to `reveal.sh`. This wrapper includes basic error handling and an `on run` handler for direct app launch.
 
 2.  **Missing Components**:
     *   The logic within `reveal.sh` for the "Reveal" skill is not yet implemented.
