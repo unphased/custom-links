@@ -27,8 +27,8 @@ This approach aims to streamline workflows by providing a seamless way to naviga
 The custom URL handler is built as a macOS Application Bundle.
 
 *   `Info.plist`: Defines the custom URL scheme (e.g., `reveal://`) and other application metadata.
-*   `reveal.sh`: A shell script that is bundled with the application. This script contains the custom logic to be executed when the URL is invoked. It receives the full URL as an argument.
-*   `build.sh`: A shell script to create the application bundle. It compiles an embedded AppleScript that acts as a lightweight wrapper to receive the URL and execute `reveal.sh`. It also copies the `Info.plist` and the script into the bundle, and registers the application with LaunchServices.
+*   `dispatch.sh`: A shell script that is bundled with the application. This script contains the custom logic to be executed when the URL is invoked. It receives the full URL as an argument.
+*   `build.sh`: A shell script to create the application bundle. It compiles an embedded AppleScript that acts as a lightweight wrapper to receive the URL and execute `dispatch.sh`. It also copies the `Info.plist` and the script into the bundle, and registers the application with LaunchServices.
 
 ## How to Use
 
@@ -42,4 +42,4 @@ The custom URL handler is built as a macOS Application Bundle.
     ```
     Or by clicking a link `reveal://some/data/or/path` in an application that supports custom URL schemes.
 
-The `reveal.sh` will then receive `reveal://some/data/or/path` as its first argument and can act upon it.
+The `dispatch.sh` will then receive `reveal://some/data/or/path` as its first argument and can act upon it.
