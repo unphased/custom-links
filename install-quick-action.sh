@@ -100,7 +100,8 @@ cat <<EOF > "$WORKFLOW_PATH/Contents/document.wflow"
 				<dict>
 					<key>command</key>
 					<string># For debugging, log to a file to see if the action is triggered and what it receives.
-QUICK_ACTION_LOG="\$HOME/quick_action_debug.log"
+# We use /tmp because it is a world-writable directory, avoiding permissions issues.
+QUICK_ACTION_LOG="/tmp/quick_action_debug.log"
 echo "---" &gt;&gt; "\$QUICK_ACTION_LOG"
 echo "Quick Action triggered at \$(date)" &gt;&gt; "\$QUICK_ACTION_LOG"
 echo "Arguments received: \$@" &gt;&gt; "\$QUICK_ACTION_LOG"
@@ -163,6 +164,10 @@ echo "$WORKFLOW_PATH"
 echo ""
 echo "To use it, select a piece of text (like a file path) in any application,"
 echo "right-click, and choose '$SERVICE_MENU_TITLE' from the 'Services' menu."
-echo "You may need to log out and log back in for the service to appear."
+echo ""
+echo "Attempting to refresh services cache to make it appear immediately..."
+# The 'pbs' utility is used by Automator to update the services menu.
+/System/Library/CoreServices/pbs -update &>/dev/null || true
+echo "Installation complete. If the service doesn't appear, you may need to log out and back in."
 
 exit 0
