@@ -104,18 +104,20 @@ cat <<EOF > "$WORKFLOW_PATH/Contents/document.wflow"
 QUICK_ACTION_LOG="/tmp/quick_action_debug.log"
 echo "---" &gt;&gt; "\$QUICK_ACTION_LOG"
 echo "Quick Action triggered at \$(date)" &gt;&gt; "\$QUICK_ACTION_LOG"
-echo "Arguments received: \$@" &gt;&gt; "\$QUICK_ACTION_LOG"
 
-# Loop over each line/item provided by the selection
-for f in "\$@"; do
-  echo "Processing item: '\$f'" &gt;&gt; "\$QUICK_ACTION_LOG"
-  # Pass the selected text to our custom URL handler
-  open "reveal://\$f"
-  echo "Executed: open \"reveal://\$f\"" &gt;&gt; "\$QUICK_ACTION_LOG"
-done
+# Read the entire selection from standard input.
+input=\$(cat)
+
+echo "Stdin received: '\$input'" &gt;&gt; "\$QUICK_ACTION_LOG"
+
+# Pass the entire selected text to our custom URL handler.
+# The input is quoted to handle spaces, newlines, etc.
+open "reveal://\$input"
+
+echo "Executed: open \"reveal://\$input\"" &gt;&gt; "\$QUICK_ACTION_LOG"
 </string>
 					<key>inputMethod</key>
-					<integer>1</integer>
+					<integer>0</integer>
 					<key>shell</key>
 					<string>/bin/bash</string>
 				</dict>
