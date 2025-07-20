@@ -17,7 +17,7 @@ FILE_PATH="$1"
 # This handler only acts on existing files. If the path doesn't point to a
 # real file on disk, we decline to handle it.
 if [ ! -e "$FILE_PATH" ]; then
-    echo "Editor handler: Path does not exist, declining." >&2
+    echo "Editor handler: Path $FILE_PATH does not exist, declining." >&2
     exit 1
 fi
 
@@ -27,7 +27,7 @@ fi
 if [ -d "$FILE_PATH" ]; then
     # This is not an error, just this handler declining to act.
     # Output to stderr for logging by the dispatcher.
-    echo "Editor handler: Input is a directory, declining." >&2
+    echo "Editor handler: Input $FILE_PATH is a directory, declining." >&2
     exit 1
 fi
 
@@ -66,6 +66,5 @@ if command -v code &> /dev/null; then
     exit 0
 fi
 
-# Fallback: Open with the default application for this file type.
-open "$FILE_PATH"
-exit 0
+echo "Doing nothing" >&2
+exit 1
