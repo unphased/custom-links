@@ -84,7 +84,7 @@ else
             dialog_text_prefix="Could not handle the input:"
         fi
 
-        osascript -e "display dialog (${dialog_text_prefix} & return & return & quoted form of \"${expanded_path}\") with title \"Reveal Handler Error\" buttons {\"OK\"} default button \"OK\""
+        osascript -e "display dialog (\"${dialog_text_prefix}\" & return & return & quoted form of \"${expanded_path}\") with title \"Reveal Handler Error\" buttons {\"OK\"} default button \"OK\""
         # We do not exit with an error code here.
         # The notification is sufficient, and exiting with 1 would trigger the
         # top-level AppleScript error dialog, which we want to avoid.
