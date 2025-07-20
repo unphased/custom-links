@@ -13,6 +13,14 @@ set -e
 
 FILE_PATH="$1"
 
+# --- Path Validation ---
+# This handler only acts on existing files. If the path doesn't point to a
+# real file on disk, we decline to handle it.
+if [ ! -e "$FILE_PATH" ]; then
+    echo "Editor handler: Path does not exist, declining." >&2
+    exit 1
+fi
+
 # --- File Type Check ---
 # This handler only acts on files it considers "source code".
 # We exit with 1 if the file is not a code file, or if it's a directory.

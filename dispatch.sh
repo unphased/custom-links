@@ -58,8 +58,8 @@ execute_handler() {
         "$default_handler_path" "$path_arg"
     else
         log "Error: No executable handler found for '$handler_name'."
-        osascript -e "display notification \"Could not find handler: ${handler_name}\" with title \"Reveal Handler Error\""
-        exit 1
+        # Return 1 to indicate failure, allowing the dispatcher to try other handlers.
+        return 1
     fi
 }
 
@@ -78,7 +78,9 @@ else
     else
         log "All handlers failed for path: $expanded_path"
         osascript -e "display notification \"Could not handle the input: ${expanded_path}\" with title \"Reveal Handler Error\""
-        exit 1
+        # We do not exit with an error code here.
+        # The notification is sufficient, and exiting with 1 would trigger the
+        # top-level AppleScript error dialog, which we want to avoid.
     fi
 fi
 

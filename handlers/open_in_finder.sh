@@ -8,6 +8,13 @@ set -e
 
 ITEM_PATH="$1"
 
+# --- Path Validation ---
+# This handler only acts on existing files or directories.
+if [ ! -e "$ITEM_PATH" ]; then
+    echo "Finder handler: Path does not exist, declining." >&2
+    exit 1
+fi
+
 if [ -d "$ITEM_PATH" ]; then
     # It's a directory, open it directly.
     open "$ITEM_PATH"
