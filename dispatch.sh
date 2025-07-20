@@ -83,10 +83,6 @@ else
         else
             dialog_text_prefix="Could not handle the input:"
         fi
-            dialog_text_prefix="File or directory not found:"
-        else
-            dialog_text_prefix="Could not handle the input:"
-        fi
 
         osascript -e "display dialog (${dialog_text_prefix} & return & return & quoted form of \"${expanded_path}\") with title \"Reveal Handler Error\" buttons {\"OK\"} default button \"OK\""
         # We do not exit with an error code here.
