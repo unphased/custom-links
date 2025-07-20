@@ -42,11 +42,16 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
 
 ## Next Steps to Implement the "Reveal" Skill
 
-1.  **AppleScript Wrapper**: **(DONE)**
+1.  **Quick Action / Service**: **(PENDING)**
+    *   **Objective**: Create a script to automatically install a macOS Quick Action (Service).
+    *   **Functionality**: This service will appear in the right-click context menu for any selected text. When invoked, it will take the selected text and pass it to the `reveal://` URL handler.
+    *   **Action**: Create an `install-quick-action.sh` script that programmatically generates the necessary `.workflow` bundle in `~/Library/Services`.
+
+2.  **AppleScript Wrapper**: **(DONE)**
     *   **Status**: The AppleScript logic has been embedded directly into the `build.sh` script, removing the need for a separate `HandleURL.applescript` file.
     *   **Functionality**: The compiled application correctly captures the incoming URL, finds `dispatch.sh` within the app bundle, and executes it, passing the URL as an argument. It includes error dialogs and an `on run` handler for direct launches.
 
-2.  **Enhance `dispatch.sh` for "Reveal" Logic**: **(PENDING)**
+3.  **Enhance `dispatch.sh` for "Reveal" Logic**: **(PENDING)**
     *   **URL Parsing**:
         *   Extract the path/data from the received URL (e.g., `reveal://path/to/file` -> `/path/to/file`). Consider how to handle URL encoding.
     *   **Path Validation**:
@@ -70,16 +75,16 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
         *   Log errors clearly.
         *   Provide user feedback if possible (e.g., via `osascript -e 'display notification "Error message" with title "Custom Link Error"'`).
 
-3.  **Configuration Management**:
+4.  **Configuration Management**:
     *   **Objective**: Allow users to customize behavior (e.g., preferred editor, list of source code extensions).
     *   **Action**: Consider a configuration file (e.g., `~/.config/custom_link_handler/config.sh` or a JSON/YAML file) that `dispatch.sh` can source or parse.
 
-4.  **Refine `Info.plist`**:
+5.  **Refine `Info.plist`**:
     *   **`CFBundleIdentifier`**: Change `com.example.myurlhandler` to a unique, project-specific identifier (e.g., `com.yourusername.customlinkhandler`).
     *   **`CFBundleName`**: Change `MyURLHandler` to a more descriptive name if desired (e.g., "CodeLink Handler"). This should match `APP_NAME` in `build.sh`.
     *   **`NSHumanReadableCopyright`**: Update placeholder.
 
-5.  **Testing**:
+6.  **Testing**:
     *   Create a suite of test URLs:
         *   Valid source code file paths.
         *   Valid non-source code file paths.
@@ -89,7 +94,7 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
         *   URLs with parameters for editor choice (if implemented).
     *   Test editor integrations thoroughly.
 
-6.  **Documentation Updates**:
+7.  **Documentation Updates**:
     *   Update `README.md` with details on how the "Reveal" skill is implemented, how to configure it, and any new dependencies or setup steps.
     *   Document the expected URL format for the "Reveal" skill.
 

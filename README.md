@@ -32,14 +32,37 @@ The custom URL handler is built as a macOS Application Bundle.
 
 ## How to Use
 
-1.  Run the `build.sh` script to create the `.app` bundle and register the URL handler.
-    ```bash
-    ./build.sh
-    ```
-2.  Once registered, you can invoke the handler by opening a URL with the custom scheme, for example, from a terminal:
-    ```bash
-    open reveal://some/data/or/path
-    ```
-    Or by clicking a link `reveal://some/data/or/path` in an application that supports custom URL schemes.
+There are two main components to set up:
 
-The `dispatch.sh` will then receive `reveal://some/data/or/path` as its first argument and can act upon it.
+1.  **The URL Handler Application**: This is the core component that handles `reveal://` URLs.
+2.  **The Quick Action**: This is an optional but highly recommended macOS Service that lets you trigger the URL handler from any selected text.
+
+### 1. Build and Register the URL Handler
+
+Run the `build.sh` script to create the `.app` bundle and register it with macOS.
+
+```bash
+./build.sh
+```
+
+This allows you to invoke the handler by opening a URL with the custom scheme, for example, from a terminal:
+
+```bash
+open reveal://some/data/or/path
+```
+
+### 2. Install the Quick Action (for easy text selection)
+
+To easily send any selected text (like a file path in a log or document) to the handler, run the `install-quick-action.sh` script.
+
+```bash
+./install-quick-action.sh
+```
+
+This will install a "Reveal Path" service. To use it:
+1.  Highlight a piece of text in any application.
+2.  Right-click the selected text.
+3.  Navigate to the `Services` menu at the bottom of the context menu.
+4.  Click `Reveal Path`.
+
+The `dispatch.sh` script will then receive `reveal://THE_SELECTED_TEXT` as its first argument and can act upon it.
