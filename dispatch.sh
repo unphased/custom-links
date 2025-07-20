@@ -31,21 +31,12 @@ raw_path="${1#reveal://}"
 decoded_path=$(printf '%b' "${raw_path//%/\\x}")
 log "Decoded path: $decoded_path"
 
-# --- Path Validation ---
-if [ -z "$decoded_path" ]; then
-    log "Error: Path is empty after decoding."
-    exit 1
-fi
-
-# Expand tilde to the user's home directory.
+# --- Path Expansion ---
+# The input string is passed to handlers without validation.
+# Tilde expansion is performed to support home directory paths.
+# Handlers are responsible for interpreting the input they receive.
 eval expanded_path="$decoded_path"
-if [ ! -e "$expanded_path" ]; then
-    log "Error: Path does not exist: '$expanded_path'"
-    # Optional: Display a notification to the user.
-    osascript -e "display notification \"Path not found: ${expanded_path}\" with title \"Reveal Handler Error\""
-    exit 1
-fi
-log "Validated path: $expanded_path"
+log "Expanded input: $expanded_path"
 
 # --- Handler Dispatch Logic ---
 # This function finds and executes the appropriate handler script.
