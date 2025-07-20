@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# --- Manual Quick Action Setup (for reference) ---
+# The `install-quick-action.sh` script automates this process. If it fails on a
+# future macOS version, you can perform these steps manually in Automator:
+# 1. Open Automator and create a new "Quick Action".
+# 2. Set "Workflow receives current" to "text" in "any application".
+# 3. Add a "Run Shell Script" action.
+# 4. Set "Pass input" to "to stdin" and shell to "/bin/zsh" (or your preferred shell).
+# 5. Paste the following script into the text box:
+#    input=$(cat)
+#    open "reveal://$input"
+# 6. Save the Quick Action with a name like "Reveal Path".
+# ---------------------------------------------------
+
 # --- Configuration ---
 APP_NAME="MyURLHandler.app" # Output application bundle name (should match CFBundleName ideally)
 PLIST_SOURCE="Info.plist" # Input Info.plist file

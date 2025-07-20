@@ -66,3 +66,18 @@ This will install a "Reveal Path" service. To use it:
 4.  Click `Reveal Path`.
 
 The `dispatch.sh` script will then receive `reveal://THE_SELECTED_TEXT` as its first argument and can act upon it.
+
+#### Manual Installation (if the script fails)
+
+The `install-quick-action.sh` script generates a `.workflow` file. If this script becomes brittle due to macOS updates, you can create the Quick Action manually using Automator:
+
+1.  **Open Automator** and select **File > New**, then choose **Quick Action**.
+2.  Configure the workflow to receive **text** input from **any application**.
+3.  Add a **Run Shell Script** action to the workflow.
+4.  In the action's settings, set **Pass input** to **to stdin** and ensure the shell is set to `/bin/zsh` or your preferred shell.
+5.  Paste the following commands into the script area:
+    ```bash
+    input=$(cat)
+    open "reveal://$input"
+    ```
+6.  Save the Quick Action with a name like "Reveal Path". It will now be available in the Services menu.
