@@ -1,19 +1,104 @@
 #!/bin/bash
 
-# This script receives the custom URL as its first argument ($1)
-# Example: Log the URL to a file in the user's home directory
+# This script acts as a central dispatcher for the reveal:// URL scheme.
+# It parses the URL, determines the correct action, and delegates to a
+# specific handler script.
 
-LOG_FILE="$HOME/custom_url_handler.log"
-URL_RECEIVED="$1"
+set -e
 
-echo "$(date): Received URL: ${URL_RECEIVED}" >> "${LOG_FILE}"
+# --- Configuration ---
+# The base directory for user-specific configuration and custom handlers.
+# Users can override default behavior by placing scripts in this directory.
+USER_CONFIG_DIR="$HOME/.config/reveal-handler"
+# The directory inside the app bundle where default handlers are stored.
+DEFAULT_HANDLERS_DIR="$(dirname "$0")/handlers"
+# Log file for debugging.
+LOG_FILE="$HOME/reveal_handler.log"
 
-# Add your custom logic here.
-# For example, parse the URL, clone a git repo, open a file, etc.
+# --- Logging ---
+log() {
+    echo "$(date): $1" >> "$LOG_FILE"
+}
 
-# Example: Open the URL with the default browser if it's http/https
-# if [[ "${URL_RECEIVED}" == http* ]]; then
-#   open "${URL_RECEIVED}"
-# fi
+log "--- Dispatcher Started ---"
+log "Received URL: $1"
 
+# --- URL Parsing ---
+# Remove the "reveal://" scheme prefix.
+raw_path="${1#reveal://}"
+# URL-decode the path to handle spaces and special characters.
+# Using printf for robust decoding.
+decoded_path=$(printf '%b' "${raw_path//%/\\x}")
+log "Decoded path: $decoded_path"
+
+# --- Path Validation ---
+if [ -z "$decoded_path" ]; then
+    log "Error: Path is empty after decoding."
+    exit 1
+fi
+
+# Expand tilde to the user's home directory.
+eval expanded_path="$decoded_path"
+if [ ! -e "$expanded_path" ]; then
+    log "Error: Path does not exist: '$expanded_path'"
+    # Optional: Display a notification to the user.
+    osascript -e "display notification \"Path not found: ${expanded_path}\" with title \"Reveal Handler Error\""
+    exit 1
+fi
+log "Validated path: $expanded_path"
+
+# --- Handler Dispatch Logic ---
+# This function finds and executes the appropriate handler script.
+# It prioritizes user-defined handlers over the default ones.
+# Arguments:
+#   $1: The name of the handler script (e.g., "open_in_editor.sh").
+#   $2: The argument to pass to the handler (the file path).
+execute_handler() {
+    local handler_name="$1"
+    local path_arg="$2"
+    local user_handler_path="$USER_CONFIG_DIR/handlers/$handler_name"
+    local default_handler_path="$DEFAULT_HANDLERS_DIR/$handler_name"
+
+    if [ -f "$user_handler_path" ] && [ -x "$user_handler_path" ]; then
+        log "Executing user handler: $user_handler_path"
+        "$user_handler_path" "$path_arg"
+    elif [ -f "$default_handler_path" ] && [ -x "$default_handler_path" ]; then
+        log "Executing default handler: $default_handler_path"
+        "$default_handler_path" "$path_arg"
+    else
+        log "Error: No executable handler found for '$handler_name'."
+        osascript -e "display notification \"Could not find handler: ${handler_name}\" with title \"Reveal Handler Error\""
+        exit 1
+    fi
+}
+
+# --- File Type Detection ---
+# Define a list of extensions to be considered "source code".
+# This could also be moved to the user config file.
+# Note: This is a simple example. A more robust solution might use `file` command.
+is_source_code() {
+    local filename="$1"
+    case "$filename" in
+        *.py|*.js|*.ts|*.jsx|*.tsx|*.rb|*.go|*.rs|*.c|*.cpp|*.h|*.hpp|*.java|*.kt|*.swift|*.sh|*.zsh|*.bash|*.md|*.json|*.yml|*.yaml|*.toml|*.lua)
+            return 0 # Is source code
+            ;;
+        *)
+            return 1 # Is not source code
+            ;;
+    esac
+}
+
+# --- Main Logic ---
+if [ -d "$expanded_path" ]; then
+    log "Path is a directory. Using finder handler."
+    execute_handler "open_in_finder.sh" "$expanded_path"
+elif is_source_code "$expanded_path"; then
+    log "Path is a source code file. Using editor handler."
+    execute_handler "open_in_editor.sh" "$expanded_path"
+else
+    log "Path is a non-code file. Using finder handler."
+    execute_handler "open_in_finder.sh" "$expanded_path"
+fi
+
+log "--- Dispatcher Finished ---"
 exit 0

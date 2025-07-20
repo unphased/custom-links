@@ -21,6 +21,7 @@ RESOURCE_SCRIPT="dispatch.sh" # The shell script to bundle
 # --- Error Checking ---
 if [ ! -f "$PLIST_SOURCE" ]; then echo "Error: Info.plist source '$PLIST_SOURCE' not found."; exit 1; fi
 if [ ! -f "$RESOURCE_SCRIPT" ]; then echo "Error: Resource script '$RESOURCE_SCRIPT' not found."; exit 1; fi
+if [ ! -d "handlers" ]; then echo "Error: 'handlers' directory not found."; exit 1; fi
 
 # --- Build Steps ---
 echo "Ensuring resource script is executable..."
@@ -66,6 +67,10 @@ echo "Copying resource script '$RESOURCE_SCRIPT' into bundle..."
 mkdir -p "$APP_NAME/Contents/Resources"
 cp "$RESOURCE_SCRIPT" "$APP_NAME/Contents/Resources/"
 if [ $? -ne 0 ]; then echo "Error: Failed to copy resource script."; exit 1; fi
+
+echo "Copying handler scripts into bundle..."
+cp -R "handlers" "$APP_NAME/Contents/Resources/"
+if [ $? -ne 0 ]; then echo "Error: Failed to copy handlers."; exit 1; fi
 
 echo ""
 echo "Build successful: '$APP_NAME' created."

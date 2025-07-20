@@ -7,28 +7,21 @@ This document outlines the current state of the "Custom Link URL Handler" projec
 As of commit `b24426a` ("feat: Add explicit bash path, error title, and run handler"):
 
 1.  **Core Infrastructure**:
-    *   A `build.sh` script is in place to compile an AppleScript application (`MyURLHandler.app`).
-    *   The build script handles:
-        *   Compiling `HandleURL.applescript`.
-        *   Copying a custom `Info.plist` into the application bundle.
-        *   Bundling a shell script (`dispatch.sh`) into the app's Resources.
-        *   Registering the application with LaunchServices to handle a custom URL scheme.
-    *   `Info.plist` is configured:
-        *   Defines `CFBundleIdentifier` (currently `com.example.myurlhandler`).
-        *   Defines `CFBundleName` (currently `MyURLHandler`).
-        *   Registers the `reveal://` URL scheme.
-        *   Includes a descriptive name for the URL type related to opening code locations.
-    *   `dispatch.sh` is a basic script that currently logs the received URL to `$HOME/custom_url_handler.log`.
-    *   `README.md` provides a high-level overview of the project, its concept, the "Reveal" skill use case, and setup instructions.
-    *   The `build.sh` script embeds the necessary AppleScript to receive the URL and pass it to `dispatch.sh`. This wrapper includes basic error handling and an `on run` handler for direct app launch.
+    *   A `build.sh` script compiles an AppleScript application (`MyURLHandler.app`).
+    *   The build script bundles `dispatch.sh` and a `handlers/` directory into the app and registers it with LaunchServices.
+    *   `Info.plist` is configured to register the `reveal://` URL scheme.
+    *   A `dispatch.sh` script acts as a central dispatcher, parsing URLs and delegating to handler scripts.
+    *   A `handlers/` directory contains default scripts for actions like `open_in_editor.sh` and `open_in_finder.sh`.
+    *   The architecture supports user-specific overrides by placing custom handlers in `~/.config/reveal-handler/handlers`.
+    *   `README.md` and `PLANNING.md` are updated to reflect the new architecture.
 
-2.  **Missing Components**:
-    *   The logic within `dispatch.sh` for the "Reveal" skill is not yet implemented.
-
-3.  **Functionality**:
+2.  **Functionality**:
     *   The system can be built and registered.
-    *   Invoking a `reveal://` URL will trigger `dispatch.sh`, and the URL will be logged.
-    *   No actual file/code revealing functionality exists yet.
+    *   Invoking a `reveal://` URL triggers `dispatch.sh`.
+    *   The dispatcher decodes the path, validates it, and determines whether it's a directory, source code file, or other file.
+    *   It executes the appropriate handler (`open_in_finder.sh` or `open_in_editor.sh`).
+    *   The default `open_in_editor.sh` provides a basic fallback, ready for user-specific logic (e.g., Neovim/VSCode integration).
+    *   The system is now flexible and configurable.
 
 ## Stated Goals (Recap from README.md)
 
@@ -40,63 +33,33 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
         *   If source code: Open in a preferred code editor (Neovim/Neovide, or VSCode as an alternative).
         *   If not source code: Reveal in Finder.
 
-## Next Steps to Implement the "Reveal" Skill
+## Next Steps
 
-1.  **Quick Action / Service**: **(PENDING)**
-    *   **Objective**: Create a script to automatically install a macOS Quick Action (Service).
-    *   **Functionality**: This service will appear in the right-click context menu for any selected text. When invoked, it will take the selected text and pass it to the `reveal://` URL handler.
-    *   **Action**: Create an `install-quick-action.sh` script that programmatically generates the necessary `.workflow` bundle in `~/Library/Services`.
+1.  **Implement User-Specific Editor Logic**: **(PENDING)**
+    *   **Objective**: Populate the `handlers/open_in_editor.sh` script with the desired Neovim/Neovide/Tmux integration logic.
+    *   **Action**: Edit `handlers/open_in_editor.sh` to include the advanced commands for opening files at specific locations in the editor. This will serve as the powerful default for users of the project.
 
-2.  **AppleScript Wrapper**: **(DONE)**
-    *   **Status**: The AppleScript logic has been embedded directly into the `build.sh` script, removing the need for a separate `HandleURL.applescript` file.
-    *   **Functionality**: The compiled application correctly captures the incoming URL, finds `dispatch.sh` within the app bundle, and executes it, passing the URL as an argument. It includes error dialogs and an `on run` handler for direct launches.
+2.  **Refine Configuration**: **(PENDING)**
+    *   **Objective**: Make more parts of the system configurable.
+    *   **Action**: Consider moving the list of source code extensions from `dispatch.sh` into a configuration file (e.g., `~/.config/reveal-handler/config`) that can be sourced. This would allow users to easily define what they consider a "code file".
 
-3.  **Enhance `dispatch.sh` for "Reveal" Logic**: **(PENDING)**
-    *   **URL Parsing**:
-        *   Extract the path/data from the received URL (e.g., `reveal://path/to/file` -> `/path/to/file`). Consider how to handle URL encoding.
-    *   **Path Validation**:
-        *   Check if the extracted path exists.
-    *   **Source Code File Detection**:
-        *   Implement logic to determine if a file is a "source code file". This could be based on:
-            *   File extension (e.g., `.py`, `.js`, `.c`, `.md`).
-            *   Shebang line.
-            *   A configurable list of extensions or MIME types.
-    *   **Editor Integration (Neovim/Neovide)**:
-        *   Develop commands to open the file in Neovim or Neovide. This might involve:
-            *   Checking if Neovide is running and sending a command.
-            *   Using `nvim --remote` or similar IPC mechanisms if a Neovim server is active.
-            *   Falling back to opening in a new Neovim instance in the terminal.
-    *   **Editor Integration (VSCode)**:
-        *   Develop commands to open the file in VSCode (e.g., `code /path/to/file`).
-        *   Implement logic for choosing VSCode (e.g., based on a modifier key passed in the URL, or a configuration setting). The `Info.plist` mentions "if holding shift", which implies the AppleScript might need to detect modifier keys, or the URL itself might need to encode this.
-    *   **Finder Integration**:
-        *   If not a source code file, use `open -R /path/to/file` to reveal in Finder (or `open /path/to/directory` for directories).
-    *   **Error Handling**:
-        *   Log errors clearly.
-        *   Provide user feedback if possible (e.g., via `osascript -e 'display notification "Error message" with title "Custom Link Error"'`).
-
-4.  **Configuration Management**:
-    *   **Objective**: Allow users to customize behavior (e.g., preferred editor, list of source code extensions).
-    *   **Action**: Consider a configuration file (e.g., `~/.config/custom_link_handler/config.sh` or a JSON/YAML file) that `dispatch.sh` can source or parse.
-
-5.  **Refine `Info.plist`**:
-    *   **`CFBundleIdentifier`**: Change `com.example.myurlhandler` to a unique, project-specific identifier (e.g., `com.yourusername.customlinkhandler`).
-    *   **`CFBundleName`**: Change `MyURLHandler` to a more descriptive name if desired (e.g., "CodeLink Handler"). This should match `APP_NAME` in `build.sh`.
+3.  **Refine `Info.plist`**: **(PENDING)**
+    *   **`CFBundleIdentifier`**: Change `com.example.myurlhandler` to a unique, project-specific identifier (e.g., `com.yourusername.reveal-handler`).
+    *   **`CFBundleName`**: Change `MyURLHandler` to a more descriptive name if desired (e.g., "Reveal Handler"). This should match `APP_NAME` in `build.sh`.
     *   **`NSHumanReadableCopyright`**: Update placeholder.
 
-6.  **Testing**:
+4.  **Testing**: **(PENDING)**
     *   Create a suite of test URLs:
         *   Valid source code file paths.
         *   Valid non-source code file paths.
         *   Valid directory paths.
-        *   Paths with spaces or special characters.
+        *   Paths with spaces or special characters (`~/My Documents/file.txt`).
         *   Invalid paths.
-        *   URLs with parameters for editor choice (if implemented).
-    *   Test editor integrations thoroughly.
+    *   Test editor integrations thoroughly after implementing them.
+    *   Test the user override mechanism by creating a custom handler in `~/.config/reveal-handler/handlers`.
 
-7.  **Documentation Updates**:
-    *   Update `README.md` with details on how the "Reveal" skill is implemented, how to configure it, and any new dependencies or setup steps.
-    *   Document the expected URL format for the "Reveal" skill.
+5.  **Documentation Updates**: **(PENDING)**
+    *   Ensure `README.md` is clear about how to implement custom editor logic in the user's local `open_in_editor.sh` script.
 
 ## Longer-Term Considerations
 

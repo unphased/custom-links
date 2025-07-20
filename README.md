@@ -24,11 +24,34 @@ This approach aims to streamline workflows by providing a seamless way to naviga
 
 ## Implementation Details
 
-The custom URL handler is built as a macOS Application Bundle.
+The system uses a flexible, handler-based architecture.
 
-*   `Info.plist`: Defines the custom URL scheme (e.g., `reveal://`) and other application metadata.
-*   `dispatch.sh`: A shell script that is bundled with the application. This script contains the custom logic to be executed when the URL is invoked. It receives the full URL as an argument.
-*   `build.sh`: A shell script to create the application bundle. It compiles an embedded AppleScript that acts as a lightweight wrapper to receive the URL and execute `dispatch.sh`. It also copies the `Info.plist` and the script into the bundle, and registers the application with LaunchServices.
+*   **URL Handler App**: A minimal macOS Application Bundle (`.app`) whose only job is to register the `reveal://` URL scheme.
+*   `dispatch.sh`: The core script inside the app bundle. It acts as a **dispatcher**. When a `reveal://` URL is triggered, this script parses the path, determines what kind of file or directory it is, and delegates the action to a specialized handler script.
+*   `handlers/`: A directory of **handler scripts** that perform the actual work. The project includes default handlers for common actions:
+    *   `open_in_editor.sh`: Opens source code files. The default version provides a sensible starting point that can be customized.
+    *   `open_in_finder.sh`: Reveals files or opens directories in Finder.
+*   `build.sh`: A script that assembles the `.app` bundle, copies `dispatch.sh` and the `handlers/` directory into it, and registers the app with macOS.
+
+This architecture allows users to easily customize the behavior without modifying the core project files.
+
+## Configuration
+
+You can override the default behavior by creating your own handler scripts.
+
+1.  Create the configuration directory:
+    ```bash
+    mkdir -p ~/.config/reveal-handler/handlers
+    ```
+
+2.  Copy a default handler to your configuration directory to use it as a template. For example, to customize the editor action:
+    ```bash
+    cp handlers/open_in_editor.sh ~/.config/reveal-handler/handlers/
+    ```
+
+3.  Edit your local script (`~/.config/reveal-handler/handlers/open_in_editor.sh`) to implement your desired logic (e.g., opening files in Sublime Text, or using a specific `nvim` command).
+
+The `dispatch.sh` script will automatically detect and use your local handler instead of the default one bundled with the application. Make sure your custom script is executable (`chmod +x your_script.sh`).
 
 ## How to Use
 
@@ -65,7 +88,7 @@ This will install a "Reveal Path" service. To use it:
 3.  Navigate to the `Services` menu at the bottom of the context menu.
 4.  Click `Reveal Path`.
 
-The `dispatch.sh` script will then receive `reveal://THE_SELECTED_TEXT` as its first argument and can act upon it.
+The `dispatch.sh` script will then receive `reveal://THE_SELECTED_TEXT` as its first argument, parse it, and delegate to the appropriate handler.
 
 #### Manual Installation (if the script fails)
 
