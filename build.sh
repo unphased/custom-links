@@ -3,7 +3,7 @@
 # --- Configuration ---
 APP_NAME="MyURLHandler.app" # Output application bundle name (should match CFBundleName ideally)
 PLIST_SOURCE="Info.plist" # Input Info.plist file
-RESOURCE_SCRIPT="your_actual_script.sh" # The shell script to bundle
+RESOURCE_SCRIPT="reveal.sh" # The shell script to bundle
 
 # --- Error Checking ---
 if [ ! -f "$PLIST_SOURCE" ]; then echo "Error: Info.plist source '$PLIST_SOURCE' not found."; exit 1; fi
@@ -23,7 +23,7 @@ on open location theURL
 	# Get the path to the application bundle itself
 	set appPath to path to me
 	# Construct the path to the shell script inside the Resources folder
-	set scriptPath to POSIX path of appPath & "Contents/Resources/your_actual_script.sh"
+	set scriptPath to POSIX path of appPath & "Contents/Resources/reveal.sh"
 
 	# Execute the shell script, passing the received URL as the first argument.
 	try

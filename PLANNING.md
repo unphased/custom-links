@@ -23,11 +23,11 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
     *   The `build.sh` script embeds the necessary AppleScript to receive the URL and pass it to `your_actual_script.sh`. This wrapper includes basic error handling and an `on run` handler for direct app launch.
 
 2.  **Missing Components**:
-    *   The logic within `your_actual_script.sh` for the "Reveal" skill is not yet implemented.
+    *   The logic within `reveal.sh` for the "Reveal" skill is not yet implemented.
 
 3.  **Functionality**:
     *   The system can be built and registered.
-    *   Invoking a `reveal://` URL will trigger `your_actual_script.sh`, and the URL will be logged.
+    *   Invoking a `reveal://` URL will trigger `reveal.sh`, and the URL will be logged.
     *   No actual file/code revealing functionality exists yet.
 
 ## Stated Goals (Recap from README.md)
@@ -44,9 +44,9 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
 
 1.  **AppleScript Wrapper**: **(DONE)**
     *   **Status**: The AppleScript logic has been embedded directly into the `build.sh` script, removing the need for a separate `HandleURL.applescript` file.
-    *   **Functionality**: The compiled application correctly captures the incoming URL, finds `your_actual_script.sh` within the app bundle, and executes it, passing the URL as an argument. It includes error dialogs and an `on run` handler for direct launches.
+    *   **Functionality**: The compiled application correctly captures the incoming URL, finds `reveal.sh` within the app bundle, and executes it, passing the URL as an argument. It includes error dialogs and an `on run` handler for direct launches.
 
-2.  **Enhance `your_actual_script.sh` for "Reveal" Logic**: **(PENDING)**
+2.  **Enhance `reveal.sh` for "Reveal" Logic**: **(PENDING)**
     *   **URL Parsing**:
         *   Extract the path/data from the received URL (e.g., `reveal://path/to/file` -> `/path/to/file`). Consider how to handle URL encoding.
     *   **Path Validation**:
@@ -72,7 +72,7 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
 
 3.  **Configuration Management**:
     *   **Objective**: Allow users to customize behavior (e.g., preferred editor, list of source code extensions).
-    *   **Action**: Consider a configuration file (e.g., `~/.config/custom_link_handler/config.sh` or a JSON/YAML file) that `your_actual_script.sh` can source or parse.
+    *   **Action**: Consider a configuration file (e.g., `~/.config/custom_link_handler/config.sh` or a JSON/YAML file) that `reveal.sh` can source or parse.
 
 4.  **Refine `Info.plist`**:
     *   **`CFBundleIdentifier`**: Change `com.example.myurlhandler` to a unique, project-specific identifier (e.g., `com.yourusername.customlinkhandler`).
@@ -96,7 +96,7 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
 ## Longer-Term Considerations
 
 *   **Security**: Sanitize inputs from URLs carefully, especially when constructing shell commands.
-*   **Extensibility**: Design `your_actual_script.sh` or the overall system to easily add more "skills" beyond "Reveal". This might involve a dispatcher based on URL patterns.
+*   **Extensibility**: Design `reveal.sh` or the overall system to easily add more "skills" beyond "Reveal". This might involve a dispatcher based on URL patterns.
 *   **AI Integration**: Explore how AI could deduce the "disk location" or other parameters to be passed into the URL, as mentioned in the initial concept.
 
 By tackling these "Next Steps", the "Reveal" skill can be fully implemented, providing a solid foundation for the custom link handler.

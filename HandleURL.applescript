@@ -4,8 +4,8 @@ on open location theURL
 	# Get the path to the application bundle itself
 	set appPath to path to me
 	# Construct the path to the shell script inside the Resources folder
-	# 'your_actual_script.sh' should match the filename of your shell script (step 2)
-	set scriptPath to POSIX path of appPath & "Contents/Resources/your_actual_script.sh"
+	# 'reveal.sh' should match the filename of your shell script (step 2)
+	set scriptPath to POSIX path of appPath & "Contents/Resources/reveal.sh"
 
 	# Execute the shell script, passing the received URL as the first argument.
 	# 'quoted form of' ensures arguments with spaces or special characters are handled correctly.
