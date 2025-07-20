@@ -78,8 +78,11 @@ else
     else
         log "All handlers failed for path: $expanded_path"
 
-        local dialog_text_prefix
         if [ ! -e "$expanded_path" ]; then
+            dialog_text_prefix="File or directory not found:"
+        else
+            dialog_text_prefix="Could not handle the input:"
+        fi
             dialog_text_prefix="File or directory not found:"
         else
             dialog_text_prefix="Could not handle the input:"
