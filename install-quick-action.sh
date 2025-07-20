@@ -57,8 +57,31 @@ cat <<EOF > "$WORKFLOW_PATH/Contents/document.wflow"
 	<string>2.10</string>
 	<key>AMDocumentVersion</key>
 	<string>2</string>
-	<key>AM भीWorkflowType</key>
-	<string>com.apple.Automator.workflow</string>
+	<key>AMWorkflowType</key>
+	<string>com.apple.Automator.servicesMenu</string>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>workflowType</key>
+		<string>com.apple.Automator.servicesMenu</string>
+		<key>input</key>
+		<dict>
+			<key>required</key>
+			<string>0</string>
+			<key>types</key>
+			<array>
+				<string>public.utf8-plain-text</string>
+			</array>
+		</dict>
+		<key>output</key>
+		<dict>
+			<key>required</key>
+			<string>0</string>
+			<key>types</key>
+			<array>
+				<string>com.apple.Automator.nothing</string>
+			</array>
+		</dict>
+	</dict>
 	<key>actions</key>
 	<array>
 		<dict>
