@@ -20,7 +20,7 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
         *   Includes a descriptive name for the URL type related to opening code locations.
     *   `your_actual_script.sh` is a basic script that currently logs the received URL to `$HOME/custom_url_handler.log`.
     *   `README.md` provides a high-level overview of the project, its concept, the "Reveal" skill use case, and setup instructions.
-    *   `HandleURL.applescript` is implemented to receive the URL and pass it to `your_actual_script.sh`. It includes basic error handling and an `on run` handler for direct app launch.
+    *   The `build.sh` script embeds the necessary AppleScript to receive the URL and pass it to `your_actual_script.sh`. This wrapper includes basic error handling and an `on run` handler for direct app launch.
 
 2.  **Missing Components**:
     *   The logic within `your_actual_script.sh` for the "Reveal" skill is not yet implemented.
@@ -42,10 +42,9 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
 
 ## Next Steps to Implement the "Reveal" Skill
 
-1.  **`HandleURL.applescript` Implementation**: **(DONE)**
-    *   **Status**: The `HandleURL.applescript` file has been created and refined (as of commit `b24426a`).
-    *   **Functionality**: It correctly captures the incoming URL, constructs the path to `your_actual_script.sh` within the app bundle, and executes the shell script, passing the URL as an argument. It uses `/bin/bash` explicitly, includes error dialogs with a title, and has an `on run` handler for direct launches.
-    *   `build.sh` correctly references this file.
+1.  **AppleScript Wrapper**: **(DONE)**
+    *   **Status**: The AppleScript logic has been embedded directly into the `build.sh` script, removing the need for a separate `HandleURL.applescript` file.
+    *   **Functionality**: The compiled application correctly captures the incoming URL, finds `your_actual_script.sh` within the app bundle, and executes it, passing the URL as an argument. It includes error dialogs and an `on run` handler for direct launches.
 
 2.  **Enhance `your_actual_script.sh` for "Reveal" Logic**: **(PENDING)**
     *   **URL Parsing**:
@@ -91,7 +90,7 @@ As of commit `b24426a` ("feat: Add explicit bash path, error title, and run hand
     *   Test editor integrations thoroughly.
 
 6.  **Documentation Updates**:
-    *   Update `README.md` with details on how the "Reveal" skill is implemented, how to configure it, and any new dependencies or setup steps for `HandleURL.applescript`.
+    *   Update `README.md` with details on how the "Reveal" skill is implemented, how to configure it, and any new dependencies or setup steps.
     *   Document the expected URL format for the "Reveal" skill.
 
 ## Longer-Term Considerations

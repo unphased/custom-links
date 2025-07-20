@@ -2,12 +2,10 @@
 
 # --- Configuration ---
 APP_NAME="MyURLHandler.app" # Output application bundle name (should match CFBundleName ideally)
-SCRIPT_SOURCE="HandleURL.applescript" # Input AppleScript file
 PLIST_SOURCE="Info.plist" # Input Info.plist file
 RESOURCE_SCRIPT="your_actual_script.sh" # The shell script to bundle
 
 # --- Error Checking ---
-if [ ! -f "$SCRIPT_SOURCE" ]; then echo "Error: AppleScript source '$SCRIPT_SOURCE' not found."; exit 1; fi
 if [ ! -f "$PLIST_SOURCE" ]; then echo "Error: Info.plist source '$PLIST_SOURCE' not found."; exit 1; fi
 if [ ! -f "$RESOURCE_SCRIPT" ]; then echo "Error: Resource script '$RESOURCE_SCRIPT' not found."; exit 1; fi
 
@@ -17,8 +15,33 @@ chmod +x "$RESOURCE_SCRIPT"
 if [ $? -ne 0 ]; then echo "Error: Failed to make resource script executable."; exit 1; fi
 
 echo "Compiling AppleScript to application bundle '$APP_NAME'..."
-# -x creates an app bundle, -o specifies output name
-osacompile -x -o "$APP_NAME" "$SCRIPT_SOURCE"
+
+# AppleScript to handle the URL and run the bundled shell script.
+# This is embedded here to avoid needing a separate .applescript file.
+APPLESCRIPT_CODE='
+on open location theURL
+	# Get the path to the application bundle itself
+	set appPath to path to me
+	# Construct the path to the shell script inside the Resources folder
+	set scriptPath to POSIX path of appPath & "Contents/Resources/your_actual_script.sh"
+
+	# Execute the shell script, passing the received URL as the first argument.
+	try
+		do shell script "/bin/bash " & quoted form of scriptPath & " " & quoted form of theURL
+	on error errMsg number errNum
+		# Basic error handling: display a dialog if the script fails
+		display dialog "Error executing script: " & errMsg & " (Error " & errNum & ")" with title "MyURLHandler Error" buttons {"OK"} default button "OK"
+	end try
+end open location
+
+on run
+	# This handler is called if the Application is launched directly, not via URL
+	display dialog "This application is intended to be launched via its custom URL scheme (reveal://)." with title "MyURLHandler" buttons {"OK"} default button "OK"
+end run
+'
+
+# -x creates an app bundle, -o specifies output name, -e executes a script string
+osacompile -x -e "${APPLESCRIPT_CODE}" -o "$APP_NAME"
 if [ $? -ne 0 ]; then echo "Error: osacompile failed."; exit 1; fi
 
 echo "Replacing default Info.plist with custom '$PLIST_SOURCE'..."
