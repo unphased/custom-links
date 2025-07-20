@@ -99,11 +99,20 @@ cat <<EOF > "$WORKFLOW_PATH/Contents/document.wflow"
 				<key>ActionParameters</key>
 				<dict>
 					<key>command</key>
-					<string># Loop over each line/item provided by the selection
+					<string># For debugging, log to a file to see if the action is triggered and what it receives.
+QUICK_ACTION_LOG="\$HOME/quick_action_debug.log"
+echo "---" &gt;&gt; "\$QUICK_ACTION_LOG"
+echo "Quick Action triggered at \$(date)" &gt;&gt; "\$QUICK_ACTION_LOG"
+echo "Arguments received: \$@" &gt;&gt; "\$QUICK_ACTION_LOG"
+
+# Loop over each line/item provided by the selection
 for f in "\$@"; do
+  echo "Processing item: '\$f'" &gt;&gt; "\$QUICK_ACTION_LOG"
   # Pass the selected text to our custom URL handler
   open "reveal://\$f"
-done</string>
+  echo "Executed: open \"reveal://\$f\"" &gt;&gt; "\$QUICK_ACTION_LOG"
+done
+</string>
 					<key>inputMethod</key>
 					<integer>1</integer>
 					<key>shell</key>
