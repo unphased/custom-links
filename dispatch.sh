@@ -52,10 +52,12 @@ execute_handler() {
 
     if [ -f "$user_handler_path" ] && [ -x "$user_handler_path" ]; then
         log "Executing user handler: $user_handler_path"
-        "$user_handler_path" "$path_arg"
+        # We redirect stderr (2) to the log file (>>) to capture handler output.
+        "$user_handler_path" "$path_arg" 2>> "$LOG_FILE"
     elif [ -f "$default_handler_path" ] && [ -x "$default_handler_path" ]; then
         log "Executing default handler: $default_handler_path"
-        "$default_handler_path" "$path_arg"
+        # We redirect stderr (2) to the log file (>>) to capture handler output.
+        "$default_handler_path" "$path_arg" 2>> "$LOG_FILE"
     else
         log "Error: No executable handler found for '$handler_name'."
         # Return 1 to indicate failure, allowing the dispatcher to try other handlers.
